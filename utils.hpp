@@ -23,7 +23,11 @@ class interval {
     }
 
     static interval vacuous() {
-        return interval(-limits::infinity(), limits::infinity());
+        return interval(limits::infinity(), -limits::infinity());
+    }
+
+    static interval universe_positive() {
+        return interval(0, limits::infinity());
     }
 
     bool contains_closed(double m) const { return (l <= m) && (m <= r); }

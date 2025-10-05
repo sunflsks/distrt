@@ -7,10 +7,10 @@
 class camera {
    public:
     int width = 400;
-    double aspect_ratio = 2.0;
+    double aspect_ratio = 16.0 / 9.0;
     double viewport_width = 2.0;
     double focal_length = 1.0;  // distance from camera sensor to viewport
-    int antialiasing_sample_count = 1;
+    int antialiasing_sample_count = 10;
     std::string output = "output.ppm";
 
     int height = static_cast<int>(width / aspect_ratio);
@@ -35,7 +35,7 @@ class camera {
                 for (int i = 0; i < antialiasing_sample_count; i++) {
                     auto rand_ray = approximate_ray(row, col);
 #pragma omp critical
-                    total_colors += ray_color(rand_ray, world);
+                    total_colors += ray_color(rand_ray, world, 0);
                 }
 
                 write_color(out,
@@ -96,10 +96,13 @@ class camera {
     point3 pixel00_center =
         viewport_top_left + (pixel_delta_x + pixel_delta_y) * 0.5;
 
-    color ray_color(const ray& r, const hittable& tgt) {
+    color ray_color(const ray& r, const hittable& tgt, int max) {
         hittable::hit_record rec;
-        if (tgt.hit(r, interval::universe(), rec)) {
-            // where did it hit relative to the shape's normal
+        if (tgt.hit(r, interval::universe_positive(), rec) && max < 10) {
+            // where did it hit relative to the shape's normal (and if diffused,
+            // that 2)
+            auto rand = ray::rand_on_hemi(rec.normal);
+            // return 0.5 * ray_color(ray(rec.p, rand), tgt, max + 1);
             return 0.5 * (rec.normal + color(1, 1, 1));
         }
 
@@ -123,11 +126,11 @@ class camera {
     ray approximate_ray(int i, int j) {
         vec3 offset = sample_square();
         vec3 pixel_sample = pixel00_center +
-                            ((i + offset.x()) * pixel_delta_x) +
-                            ((j + offset.y()) * pixel_delta_y);
+                            ((j + offset.x()) * pixel_delta_x) +
+                            ((i + offset.y()) * pixel_delta_y);
 
         vec3 origin = camera_center;
-        vec3 direction = origin - pixel_sample;
+        vec3 direction = pixel_sample - origin;
 
         return ray(origin, direction);
     }
