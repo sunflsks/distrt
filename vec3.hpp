@@ -61,6 +61,16 @@ class vec3 {
                e[1] * v.e[2] - e[2] * v.e[1];
     }
 
+    constexpr inline vec3 gamma_transform() const {
+        double e_new[3] = {0.0};
+
+        for (int i = 0; i < 3; i++) {
+            e_new[i] = e[i] > 0 ? std::sqrt(e[i]) : 0;
+        }
+
+        return vec3(e_new[0], e_new[1], e_new[2]);
+    }
+
     vec3 unit_vector() const { return *this / this->length(); }
 };
 

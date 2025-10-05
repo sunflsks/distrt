@@ -1,5 +1,5 @@
 CXX = /opt/homebrew/opt/llvm/bin/clang++
-CFLAGS=-fopenmp -Xpreprocessor -std=c++23 -ggdb3 -O2
+CFLAGS=-fopenmp -Xpreprocessor -std=c++26 -ggdb3 -O2
 all:
 	$(CXX) *.cpp $(CFLAGS) -o rt
 

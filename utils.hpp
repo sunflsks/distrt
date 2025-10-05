@@ -27,7 +27,7 @@ class interval {
     }
 
     static interval universe_positive() {
-        return interval(0, limits::infinity());
+        return interval(0.001, limits::infinity());
     }
 
     bool contains_closed(double m) const { return (l <= m) && (m <= r); }

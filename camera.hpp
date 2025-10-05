@@ -19,7 +19,9 @@ class camera {
     point3 camera_center = point3(0, 0, 0);
 
     void render(const hittable& world) {
-        std::remove("out.ppm");
+        refresh();
+
+        std::remove(output.c_str());
         std::ofstream out(output);
 
         out << "P3\n" << width << " " << height << "\n255\n";
@@ -38,8 +40,9 @@ class camera {
                     total_colors += ray_color(rand_ray, world, 0);
                 }
 
-                write_color(out,
-                            (1.0 / antialiasing_sample_count) * total_colors);
+                total_colors *= (1.0 / antialiasing_sample_count);
+
+                write_color(out, total_colors.gamma_transform());
             }
         }
     }
@@ -101,9 +104,9 @@ class camera {
         if (tgt.hit(r, interval::universe_positive(), rec) && max < 10) {
             // where did it hit relative to the shape's normal (and if diffused,
             // that 2)
-            auto rand = ray::rand_on_hemi(rec.normal);
-            // return 0.5 * ray_color(ray(rec.p, rand), tgt, max + 1);
-            return 0.5 * (rec.normal + color(1, 1, 1));
+            auto rand = ray::rand_unit_vec() + rec.normal;
+            return 0.3 * ray_color(ray(rec.p, rand), tgt, max + 1);
+            // return 0.5 * (rec.normal + color(1, 1, 1));
         }
 
         // sky
