@@ -1,3 +1,9 @@
+*.ppm
+.vscode
+*.dSYM
+
+rt
+
 # Prerequisites
 *.d
 
