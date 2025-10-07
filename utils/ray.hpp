@@ -6,21 +6,17 @@
 class ray {
    public:
     ray() {}
-    ray(const vec3& origin, const vec3& direction)
-        : orig(origin), dir(direction) {}
+    ray(const vec3& origin, const vec3& direction) : orig(origin), dir(direction) {}
 
     const vec3& origin() const { return orig; }
     const vec3& direction() const { return dir; }
 
     vec3 at(double t) const { return orig + dir * t; }
 
-    static vec3 rand() {
-        return vec3(rand_double(), rand_double(), rand_double());
-    }
+    static vec3 rand() { return vec3(rand_double(), rand_double(), rand_double()); }
 
     static vec3 rand(double min, double max) {
-        return vec3(rand_double(min, max), rand_double(min, max),
-                    rand_double(min, max));
+        return vec3(rand_double(min, max), rand_double(min, max), rand_double(min, max));
     }
 
     static vec3 rand_unit_vec() {

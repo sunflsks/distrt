@@ -2,7 +2,6 @@
 
 #include <limits>
 #include <numbers>
-#include <random>
 
 using limits = std::numeric_limits<double>;
 
@@ -18,17 +17,11 @@ class interval {
    public:
     interval(double l, double r) : l(l), r(r) {}
 
-    static interval universe() {
-        return interval(-limits::infinity(), limits::infinity());
-    }
+    static interval universe() { return interval(-limits::infinity(), limits::infinity()); }
 
-    static interval vacuous() {
-        return interval(limits::infinity(), -limits::infinity());
-    }
+    static interval vacuous() { return interval(limits::infinity(), -limits::infinity()); }
 
-    static interval universe_positive() {
-        return interval(0.001, limits::infinity());
-    }
+    static interval universe_positive() { return interval(0.001, limits::infinity()); }
 
     bool contains_closed(double m) const { return (l <= m) && (m <= r); }
 
@@ -44,12 +37,5 @@ class interval {
     };
 };
 
-double rand_double() {
-    static std::uniform_real_distribution<double> distribution(0.0, 1.0);
-    static std::mt19937 generator;
-    return distribution(generator);
-}
-
-double rand_double(double low, double high) {  // (low, high]
-    return low + (high - low) * rand_double();
-}
+double rand_double();
+double rand_double(double low, double high);  // (low, high]
