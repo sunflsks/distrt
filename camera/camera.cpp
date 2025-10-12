@@ -19,16 +19,27 @@ color camera::ray_color(const ray& r, const hittable& tgt, int max) {
 void camera::refresh() {
     height = static_cast<int>(width / aspect_ratio);
 
-    double theta = vfov * DEG_TO_RAD;
-    auto h = std::tan(theta);
+    focal_length = (center - target).length();  // how far from the cam to the tgt?
 
-    viewport_height = viewport_width / aspect_ratio;
+    viewport_height = 2 * (std::tan((vfov * DEG_TO_RAD) / 2)) * focal_length;
+
+    viewport_width = viewport_height * aspect_ratio;
+
+    // z basis vector for cam
+    auto basis_z = (center - target).unit_vector();
+
+    // z cross y = x
+    auto basis_x = orientation.cross(basis_z).unit_vector();
+
+    // y = z cross x. this is already a unit vector, but
+    // might as well do this for consistency
+    auto basis_y = basis_z.cross(basis_x).unit_vector();
 
     // the horizontal vector spanning the viewport
-    viewport_x = point3(viewport_width, 0, 0);
+    viewport_x = viewport_width * basis_x;
 
     // the vertical vector spanning the viewport
-    viewport_y = point3(0, -viewport_height, 0);
+    viewport_y = viewport_height * -basis_y;
 
     // the horizontal vector spanning a single pixel
     pixel_delta_x = viewport_x / width;
@@ -39,7 +50,7 @@ void camera::refresh() {
     // top left of viewport is 1 behind the camera and half the viewport
     // width to the left and half the viewport height up from the camera
     // center
-    viewport_top_left = camera_center - vec3(0, 0, focal_length) - viewport_x / 2 - viewport_y / 2;
+    viewport_top_left = center - (focal_length * basis_z) - (viewport_x / 2) - (viewport_y / 2);
 
     // transform the above into a pixel and then move to the center of that
     // pixel. still in world space
@@ -92,7 +103,7 @@ ray camera::approximate_ray(int i, int j) {
     vec3 pixel_sample =
         pixel00_center + ((j + offset.x()) * pixel_delta_x) + ((i + offset.y()) * pixel_delta_y);
 
-    vec3 origin = camera_center;
+    vec3 origin = center;
     vec3 direction = pixel_sample - origin;
 
     return ray(origin, direction);

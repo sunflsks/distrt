@@ -9,7 +9,6 @@ class camera {
     int width = 200;
     double aspect_ratio = 16.0 / 9.0;
     double viewport_width = 2.0;
-    double focal_length = 1.0;  // distance from camera sensor to viewport
     int antialiasing_sample_count = 15;
     int vfov = 90;
     std::string output = "output.ppm";
@@ -17,13 +16,18 @@ class camera {
     int height = static_cast<int>(width / aspect_ratio);
     double viewport_height = viewport_width / aspect_ratio;
 
-    point3 camera_center = point3(0, 0, 0);
+    point3 center = point3(0, 0, 0);
+    point3 target = point3(0, 0, -1);
+    point3 orientation = point3(0, 1, 0);  // vector normal to the top surface of our camera
 
     void render(const hittable& world);
 
     void refresh();
 
    private:
+    // distance from camera sensor to viewport, will be recalculated
+    double focal_length = 1.0;
+
     // the horizontal vector spanning the viewport
     point3 viewport_x = point3(viewport_width, 0, 0);
 
@@ -39,8 +43,7 @@ class camera {
     // top left of viewport is 1 behind the camera and half the viewport
     // width to the left and half the viewport height up from the camera
     // center
-    point3 viewport_top_left =
-        camera_center - vec3(0, 0, focal_length) - viewport_x / 2 - viewport_y / 2;
+    point3 viewport_top_left = center - vec3(0, 0, focal_length) - viewport_x / 2 - viewport_y / 2;
 
     // transform the above into a pixel and then move to the center of that
     // pixel. still in world space

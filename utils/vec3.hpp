@@ -44,7 +44,9 @@ class vec3 {
 
     inline vec3 operator*(double x) const { return vec3(e[0] * x, e[1] * x, e[2] * x); }
 
-    inline vec3 operator*(const vec3& v) const { return vec3(e[0] * v.e[0], e[1] * v.e[1], e[2] * v.e[2]); }
+    inline vec3 operator*(const vec3 &v) const {
+        return vec3(e[0] * v.e[0], e[1] * v.e[1], e[2] * v.e[2]);
+    }
 
     inline vec3 operator/(double t) const { return *this * (1 / t); }
 
