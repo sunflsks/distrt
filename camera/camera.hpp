@@ -6,11 +6,12 @@
 
 class camera {
    public:
-    int width = 400;
+    int width = 200;
     double aspect_ratio = 16.0 / 9.0;
     double viewport_width = 2.0;
     double focal_length = 1.0;  // distance from camera sensor to viewport
-    int antialiasing_sample_count = 10;
+    int antialiasing_sample_count = 15;
+    int vfov = 90;
     std::string output = "output.ppm";
 
     int height = static_cast<int>(width / aspect_ratio);

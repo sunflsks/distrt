@@ -4,7 +4,7 @@
 
 color camera::ray_color(const ray& r, const hittable& tgt, int max) {
     hittable::hit_record rec;
-    if (tgt.hit(r, interval::universe_positive(), rec) && max < 10) {
+    if (tgt.hit(r, interval::universe_positive(), rec) && max < 20) {
         auto scattered_ray = rec.mat->scatter(r, rec);
         if (scattered_ray) {
             return scattered_ray->attenuation * ray_color(scattered_ray->scattered, tgt, max + 1);
@@ -18,6 +18,10 @@ color camera::ray_color(const ray& r, const hittable& tgt, int max) {
 
 void camera::refresh() {
     height = static_cast<int>(width / aspect_ratio);
+
+    double theta = vfov * DEG_TO_RAD;
+    auto h = std::tan(theta);
+
     viewport_height = viewport_width / aspect_ratio;
 
     // the horizontal vector spanning the viewport
@@ -53,19 +57,19 @@ void camera::render(const hittable& world) {
     for (int row = 0; row < height; row++) {
         std::clog << "\rOn line " << row << "/" << height << std::endl;
 
+#pragma omp parallel for ordered
         for (int col = 0; col < width; col++) {
             // find the pixel center in terms of world space
             color total_colors(0, 0, 0);
 
-#pragma omp for
             for (int i = 0; i < antialiasing_sample_count; i++) {
                 auto rand_ray = approximate_ray(row, col);
-#pragma omp critical
                 total_colors += ray_color(rand_ray, world, 0);
             }
 
             total_colors *= (1.0 / antialiasing_sample_count);
 
+#pragma omp ordered
             write_color(out, total_colors.gamma_transform());
         }
     }
