@@ -6,17 +6,17 @@
 #include "ray.hpp"
 #include "utils.hpp"
 
-class material;
+class Material;
 
-class hittable {
+class Hittable {
    public:
-    std::shared_ptr<material> mat;
+    std::shared_ptr<Material> mat;
 
     class hit_record {
        public:
-        std::shared_ptr<material> mat;
-        point3 p;     // point of intersection
-        vec3 normal;  // normal at the intersection
+        std::shared_ptr<Material> mat;
+        Point3 p;     // point of intersection
+        Vec3 normal;  // normal at the intersection
         double t;     // ray parameter at intersection
         bool inside;  // is the intersection inside the object
 
@@ -24,19 +24,19 @@ class hittable {
         ~hit_record();
     };
 
-    hittable();
-    hittable(std::shared_ptr<material> mat);
+    Hittable();
+    Hittable(std::shared_ptr<Material> mat);
 
-    virtual bool hit(const ray& r, const interval& t_interval, hit_record& rec) const = 0;
-    virtual ~hittable();
+    virtual bool hit(const Ray& r, const Interval& t_interval, hit_record& rec) const = 0;
+    virtual ~Hittable();
 };
 
-class hittables : public hittable {
+class Hittables : public Hittable {
    private:
-    std::vector<std::unique_ptr<hittable>> list;
+    std::vector<std::unique_ptr<Hittable>> list;
 
    public:
-    void add(std::unique_ptr<hittable> tgt) { list.push_back(std::move(tgt)); }
+    void add(std::unique_ptr<Hittable> tgt) { list.push_back(std::move(tgt)); }
 
-    bool hit(const ray& r, const interval& t_interval, hittable::hit_record& rec) const override;
+    bool hit(const Ray& r, const Interval& t_interval, Hittable::hit_record& rec) const override;
 };

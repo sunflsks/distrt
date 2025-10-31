@@ -1,23 +1,25 @@
 #pragma once
 
+#include <exception>
 #include <limits>
 #include <numbers>
+#include <vector>
 
 using limits = std::numeric_limits<double>;
 
-class interval {
+class Interval {
    private:
     double l = -std::numeric_limits<double>::infinity();
     double r = std::numeric_limits<double>::infinity();
 
    public:
-    interval(double l, double r) : l(l), r(r) {}
+    Interval(double l, double r) : l(l), r(r) {}
 
-    static interval universe() { return interval(-limits::infinity(), limits::infinity()); }
+    static Interval universe() { return Interval(-limits::infinity(), limits::infinity()); }
 
-    static interval vacuous() { return interval(limits::infinity(), -limits::infinity()); }
+    static Interval vacuous() { return Interval(limits::infinity(), -limits::infinity()); }
 
-    static interval universe_positive() { return interval(0.001, limits::infinity()); }
+    static Interval universe_positive() { return Interval(0.001, limits::infinity()); }
 
     bool contains_closed(double m) const { return (l <= m) && (m <= r); }
 

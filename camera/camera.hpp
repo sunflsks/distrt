@@ -4,7 +4,7 @@
 #include "hittable.hpp"
 #include "utils.hpp"
 
-class camera {
+class Camera {
    public:
     int width = 200;
     double aspect_ratio = 16.0 / 9.0;
@@ -16,11 +16,11 @@ class camera {
     int height = static_cast<int>(width / aspect_ratio);
     double viewport_height = viewport_width / aspect_ratio;
 
-    point3 center = point3(0, 0, 0);
-    point3 target = point3(0, 0, -1);
-    point3 orientation = point3(0, 1, 0);  // vector normal to the top surface of our camera
+    Point3 center = Point3(0, 0, 0);
+    Point3 target = Point3(0, 0, -1);
+    Point3 orientation = Point3(0, 1, 0);  // vector normal to the top surface of our camera
 
-    void render(const hittable& world);
+    void render(const Hittable& world);
 
     void refresh();
 
@@ -29,34 +29,34 @@ class camera {
     double focal_length = 1.0;
 
     // the horizontal vector spanning the viewport
-    point3 viewport_x = point3(viewport_width, 0, 0);
+    Point3 viewport_x = Point3(viewport_width, 0, 0);
 
     // the vertical vector spanning the viewport
-    point3 viewport_y = point3(0, -viewport_height, 0);
+    Point3 viewport_y = Point3(0, -viewport_height, 0);
 
     // the horizontal vector spanning a single pixel
-    point3 pixel_delta_x = viewport_x / width;
+    Point3 pixel_delta_x = viewport_x / width;
 
     // the vertical vector spanning a single pixel
-    point3 pixel_delta_y = viewport_y / height;
+    Point3 pixel_delta_y = viewport_y / height;
 
     // top left of viewport is 1 behind the camera and half the viewport
     // width to the left and half the viewport height up from the camera
     // center
-    point3 viewport_top_left = center - vec3(0, 0, focal_length) - viewport_x / 2 - viewport_y / 2;
+    Point3 viewport_top_left = center - Vec3(0, 0, focal_length) - viewport_x / 2 - viewport_y / 2;
 
     // transform the above into a pixel and then move to the center of that
     // pixel. still in world space
-    point3 pixel00_center = viewport_top_left + (pixel_delta_x + pixel_delta_y) * 0.5;
+    Point3 pixel00_center = viewport_top_left + (pixel_delta_x + pixel_delta_y) * 0.5;
 
-    color ray_color(const ray& r, const hittable& tgt, int max);
+    Color ray_color(const Ray& r, const Hittable& tgt, int max);
 
-    void write_color(std::ostream& out, color pixel_color);
+    void write_color(std::ostream& out, Color pixel_color);
 
-    ray approximate_ray(int i, int j);
+    Ray approximate_ray(int i, int j);
 
-    vec3 sample_square() const {
-        return vec3(rand_double() - 0.5, rand_double() - 0.5,
+    Vec3 sample_square() const {
+        return Vec3(rand_double() - 0.5, rand_double() - 0.5,
                     0);  // z coord doesn't matter
     }
 };

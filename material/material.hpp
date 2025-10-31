@@ -3,15 +3,13 @@
 #include "hittable.hpp"
 #include "ray.hpp"
 
-struct scatter_record {
-    ray scattered;
-    color attenuation;
+struct ScatterRecord {
+    Ray scattered;
+    Color attenuation;
 };
 
-class material {
+class Material {
    public:
-    virtual std::optional<scatter_record> scatter(const ray& r, const hittable::hit_record& rec) {
-        return std::nullopt;
-    }
-    virtual ~material() = default;
+    virtual std::optional<ScatterRecord> scatter(const Ray& r, const Hittable::hit_record& rec) = 0;
+    virtual ~Material() = default;
 };

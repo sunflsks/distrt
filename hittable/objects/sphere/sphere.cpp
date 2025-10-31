@@ -1,6 +1,6 @@
 #include "sphere.hpp"
 
-bool sphere::hit(const ray& r, const interval& t_interval, hit_record& rec) const {
+bool Sphere::hit(const Ray& r, const Interval& t_interval, hit_record& rec) const {
     auto oc = center - r.origin();
     double a = r.direction().dot(r.direction());      // a = (d . d)
     double b_half = r.direction().dot(oc);            // b = 2 * (oc . d)

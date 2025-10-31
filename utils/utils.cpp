@@ -1,3 +1,5 @@
+#include "utils.hpp"
+
 #include <random>
 
 double rand_double() {

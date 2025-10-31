@@ -3,25 +3,25 @@
 #include "utils.hpp"
 #include "vec3.hpp"
 
-class ray {
+class Ray {
    public:
-    ray() {}
-    ray(const vec3& origin, const vec3& direction) : orig(origin), dir(direction) {}
+    Ray() {}
+    Ray(const Vec3& origin, const Vec3& direction) : orig(origin), dir(direction) {}
 
-    const vec3& origin() const { return orig; }
-    const vec3& direction() const { return dir; }
+    const Vec3& origin() const { return orig; }
+    const Vec3& direction() const { return dir; }
 
-    vec3 at(double t) const { return orig + dir * t; }
+    Vec3 at(double t) const { return orig + dir * t; }
 
-    static vec3 rand() { return vec3(rand_double(), rand_double(), rand_double()); }
+    static Vec3 rand() { return Vec3(rand_double(), rand_double(), rand_double()); }
 
-    static vec3 rand(double min, double max) {
-        return vec3(rand_double(min, max), rand_double(min, max), rand_double(min, max));
+    static Vec3 rand(double min, double max) {
+        return Vec3(rand_double(min, max), rand_double(min, max), rand_double(min, max));
     }
 
-    static vec3 rand_unit_vec() {
+    static Vec3 rand_unit_vec() {
         while (true) {
-            vec3 vec = rand(-1, 1);
+            Vec3 vec = rand(-1, 1);
 
             // length = sqrt(x^2 + y^2 + z^2)
             // length^2 = x^2 + y^2 + z^2
@@ -34,8 +34,8 @@ class ray {
 
     // returns a vector that is "aligned" with the normal vector passed in below
     // (positive dot)
-    static vec3 rand_on_hemi(const vec3& norm) {
-        vec3 unit_vec = rand_unit_vec();
+    static Vec3 rand_on_hemi(const Vec3& norm) {
+        Vec3 unit_vec = rand_unit_vec();
         if (unit_vec.dot(norm) < 0) {
             return -unit_vec;
         }
@@ -44,6 +44,6 @@ class ray {
     }
 
    private:
-    vec3 orig;
-    vec3 dir;
+    Vec3 orig;
+    Vec3 dir;
 };

@@ -8,10 +8,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Source files
 set(SOURCES
     main.cpp
+
     camera/camera.cpp
+
     hittable/hittable.cpp
     hittable/hittables.cpp
     hittable/objects/sphere/sphere.cpp
+
     utils/utils.cpp
     utils/vec3.cpp
 )

@@ -4,9 +4,9 @@
 
 #include "material.hpp"
 
-hittable::hittable() = default;
-hittable::hittable(std::shared_ptr<material> mat) : mat(std::move(mat)) {}
-hittable::~hittable() = default;
+Hittable::Hittable() = default;
+Hittable::Hittable(std::shared_ptr<Material> mat) : mat(std::move(mat)) {}
+Hittable::~Hittable() = default;
 
-hittable::hit_record::hit_record() = default;
-hittable::hit_record::~hit_record() = default;
+Hittable::hit_record::hit_record() = default;
+Hittable::hit_record::~hit_record() = default;

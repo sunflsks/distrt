@@ -2,9 +2,9 @@
 
 #include "material.hpp"
 
-color camera::ray_color(const ray& r, const hittable& tgt, int max) {
-    hittable::hit_record rec;
-    if (tgt.hit(r, interval::universe_positive(), rec) && max < 20) {
+Color Camera::ray_color(const Ray& r, const Hittable& tgt, int max) {
+    Hittable::hit_record rec;
+    if (tgt.hit(r, Interval::universe_positive(), rec) && max < 20) {
         auto scattered_ray = rec.mat->scatter(r, rec);
         if (scattered_ray) {
             return scattered_ray->attenuation * ray_color(scattered_ray->scattered, tgt, max + 1);
@@ -13,10 +13,10 @@ color camera::ray_color(const ray& r, const hittable& tgt, int max) {
 
     // sky
     double a = 0.5 * (r.direction().unit_vector().y() + 1);
-    return (1 - a) * color(1, 1, 1) + a * color(0.5, 0.7, 1.0);
+    return (1 - a) * Color(1, 1, 1) + a * Color(0.5, 0.7, 1.0);
 }
 
-void camera::refresh() {
+void Camera::refresh() {
     height = static_cast<int>(width / aspect_ratio);
 
     focal_length = (center - target).length();  // how far from the cam to the tgt?
@@ -57,7 +57,7 @@ void camera::refresh() {
     pixel00_center = viewport_top_left + (pixel_delta_x + pixel_delta_y) * 0.5;
 }
 
-void camera::render(const hittable& world) {
+void Camera::render(const Hittable& world) {
     refresh();
 
     std::remove(output.c_str());
@@ -68,10 +68,9 @@ void camera::render(const hittable& world) {
     for (int row = 0; row < height; row++) {
         std::clog << "\rOn line " << row << "/" << height << std::endl;
 
-#pragma omp parallel for ordered
         for (int col = 0; col < width; col++) {
             // find the pixel center in terms of world space
-            color total_colors(0, 0, 0);
+            Color total_colors(0, 0, 0);
 
             for (int i = 0; i < antialiasing_sample_count; i++) {
                 auto rand_ray = approximate_ray(row, col);
@@ -80,14 +79,13 @@ void camera::render(const hittable& world) {
 
             total_colors *= (1.0 / antialiasing_sample_count);
 
-#pragma omp ordered
             write_color(out, total_colors.gamma_transform());
         }
     }
 }
 
-void camera::write_color(std::ostream& out, color pixel_color) {
-    static const interval zero_one(0.0, 0.9999999);
+void Camera::write_color(std::ostream& out, Color pixel_color) {
+    static const Interval zero_one(0.0, 0.9999999);
 
     double r = pixel_color.x();
     double g = pixel_color.y();
@@ -98,13 +96,13 @@ void camera::write_color(std::ostream& out, color pixel_color) {
         << static_cast<int>(255.999 * zero_one.clamp(b)) << '\n';
 }
 
-ray camera::approximate_ray(int i, int j) {
-    vec3 offset = sample_square();
-    vec3 pixel_sample =
+Ray Camera::approximate_ray(int i, int j) {
+    Vec3 offset = sample_square();
+    Vec3 pixel_sample =
         pixel00_center + ((j + offset.x()) * pixel_delta_x) + ((i + offset.y()) * pixel_delta_y);
 
-    vec3 origin = center;
-    vec3 direction = pixel_sample - origin;
+    Vec3 origin = center;
+    Vec3 direction = pixel_sample - origin;
 
-    return ray(origin, direction);
+    return Ray(origin, direction);
 }
