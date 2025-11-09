@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "ray.hpp"
-#include "utils.hpp"
+#include "utils/interval.hpp"
 
 class Material;
 
