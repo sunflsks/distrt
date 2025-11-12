@@ -1,5 +1,7 @@
 #include "sphere.hpp"
 
+#include "utils.hpp"
+
 bool Sphere::hit(const Ray& r, const Interval& t_interval, hit_record& rec) const {
     auto oc = center - r.origin();
     double a = r.direction().dot(r.direction());      // a = (d . d)
@@ -29,4 +31,28 @@ bool Sphere::hit(const Ray& r, const Interval& t_interval, hit_record& rec) cons
     rec.normal = (rec.p - center) / radius;
     rec.mat = mat;
     return true;
+}
+
+std::vector<std::byte> Sphere::bytes() const {
+    std::vector<std::byte> byte_rep;
+
+    auto identifier = type_to_id[typeid(*this)];
+    byte_rep.push_back(identifier);
+
+    // no need to worry about endianness, this code is never touching a big-endian machine.
+    auto center_array = center.data();
+    constexpr uint64_t pack_size = static_cast<uint64_t>(sizeof(center_array) + sizeof(radius));
+
+    byte_rep.insert(byte_rep.end(),
+                    reinterpret_cast<const std::byte*>(&pack_size),
+                    reinterpret_cast<const std::byte*>(&pack_size) + sizeof(pack_size));
+
+    byte_rep.insert(
+        byte_rep.end(),
+        reinterpret_cast<const std::byte*>(center_array.data()),
+        reinterpret_cast<const std::byte*>(center_array.data()) + sizeof(center_array.data()));
+
+    // TODO: something w/ mats
+
+    return byte_rep;
 }

@@ -7,7 +7,7 @@
 
 class Vec3 {
    private:
-    double e[3];
+    std::array<double, 3> e;
 
    public:
     Vec3() : e{0, 0, 0} {}
@@ -15,6 +15,7 @@ class Vec3 {
     inline double x() const { return e[0]; }
     inline double y() const { return e[1]; }
     inline double z() const { return e[2]; }
+    inline const std::array<double, 3> &data() const { return e; }
 
     inline Vec3 operator-() const { return Vec3(-e[0], -e[1], -e[2]); }
     inline double operator[](int i) const { return e[i]; }

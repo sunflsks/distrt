@@ -8,6 +8,7 @@ class Sphere : public Hittable {
         : Hittable(std::move(mat)), center(cen), radius(r) {}
 
     bool hit(const Ray& r, const Interval& t_interval, hit_record& rec) const override;
+    std::vector<std::byte> bytes() const override;
 
    private:
     Point3 center;

@@ -7,7 +7,9 @@
 #include "hittable.hpp"
 #include "materials.hpp"
 #include "ray.hpp"
+#include "serializer.hpp"
 #include "sphere.hpp"
+#include "world.hpp"
 
 int main() {
     auto material_ground = std::make_shared<DiffuseLambertian>(Color(0.2, 0.8, 0.0));
@@ -16,7 +18,7 @@ int main() {
     auto material_right = std::make_shared<Metal>(Color(0.8, 0.6, 0.2));
 
     Camera cam;
-    Hittables world;
+    World world;
 
     cam.output = "scene_0.ppm";
 
@@ -24,6 +26,9 @@ int main() {
     world.add(std::make_unique<Sphere>(Point3(0.0, 0.0 + (0.1 * 5), -1.2), 0.5, material_center));
     world.add(std::make_unique<Sphere>(Point3(-1.0, 0.0, -1.0), 0.5, material_left));
     world.add(std::make_unique<Sphere>(Point3(1.0, 0.0, -1.0), 0.5, material_right));
+
+    // send to server
+    auto bytes = WorldSerializer(world).bytes();
 
     cam.render(world);
 }

@@ -1,6 +1,9 @@
-#include "hittable.hpp"
+#include "world.hpp"
 
-bool Hittables::hit(const Ray& r, const Interval& t_interval, Hittable::hit_record& rec) const {
+#include "hittable.hpp"
+#include "interval.hpp"
+
+bool World::hit(const Ray& r, const Interval& t_interval, Hittable::hit_record& rec) const {
     bool ok = false;
     double t_closest = t_interval.upper();
     Hittable::hit_record tmp_rec;
