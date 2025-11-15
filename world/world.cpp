@@ -2,6 +2,7 @@
 
 #include "hittable.hpp"
 #include "interval.hpp"
+#include "serializer.hpp"
 
 bool World::hit(const Ray& r, const Interval& t_interval, Hittable::hit_record& rec) const {
     bool ok = false;
@@ -17,4 +18,8 @@ bool World::hit(const Ray& r, const Interval& t_interval, Hittable::hit_record& 
     }
 
     return ok;
+}
+
+std::vector<std::byte> World::bytes() const {
+    return WorldSerializer(*this).bytes();
 }

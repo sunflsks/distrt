@@ -19,6 +19,7 @@ set(SOURCES
     utils/socket.cpp
 
     world/world.cpp
+    world/serializer.cpp
 )
 
 

@@ -2,7 +2,7 @@
 
 #include "world.hpp"
 
-std::vector<std::byte> WorldSerializer::bytes() {
+std::vector<std::byte> WorldSerializer::bytes() const {
     // format
     // std::byte (uint8_t) type
     // std::byte*x (uint32_t) size
@@ -12,8 +12,11 @@ std::vector<std::byte> WorldSerializer::bytes() {
     std::vector<std::byte> serialized_objs;
 
     for (auto& hittable : world.list) {
+        auto bytes = hittable->bytes();
         serialized_objs.insert(serialized_objs.end(),
-                               std::make_move_iterator(hittable->bytes().begin()),
-                               std::make_move_iterator(hittable->bytes().end()));
+                               std::make_move_iterator(bytes.begin()),
+                               std::make_move_iterator(bytes.end()));
     }
+
+    return serialized_objs;
 }

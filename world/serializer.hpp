@@ -10,7 +10,7 @@ class WorldSerializer {
     WorldSerializer() = delete;
     WorldSerializer(const World& world) : world(world){};
 
-    std::vector<std::byte> bytes();
+    std::vector<std::byte> bytes() const;
 
    private:
     const World& world;

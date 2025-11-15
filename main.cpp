@@ -28,7 +28,7 @@ int main() {
     world.add(std::make_unique<Sphere>(Point3(1.0, 0.0, -1.0), 0.5, material_right));
 
     // send to server
-    auto bytes = WorldSerializer(world).bytes();
+    auto bytes = world.bytes();
 
     cam.render(world);
 }
