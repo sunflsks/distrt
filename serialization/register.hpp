@@ -10,12 +10,15 @@ class Register {
     using Id = std::byte;
     using FactoryFunc = std::function<std::unique_ptr<Hittable>(std::span<std::byte>)>;
 
-    static std::unique_ptr<Hittable> make_hittable(Id id, std::span<std::byte> data);
-    static Id hittable_id(const Hittable& hittable);
+    // we use these two functions so that we know when the static vars get initialized
+    inline static std::unique_ptr<Hittable> make_hittable(Register::Id id,
+                                                          std::span<std::byte> data) {
+        return get_id_to_obj()[id](data);
+    }
 
-    // we make these functions so that we know when the static vars get initialized
-    static std::unordered_map<std::type_index, Id>& get_type_to_id();
-    static std::unordered_map<Id, FactoryFunc>& get_id_to_obj();
+    inline static Register::Id hittable_id(const Hittable& hittable) {
+        return get_type_to_id()[typeid(hittable)];
+    }
 
     template <typename T>
     static bool register_hittable() {
@@ -31,5 +34,15 @@ class Register {
     }
 
    private:
-    static int id_ctr;
+    inline static int id_ctr = 0;
+
+    inline static std::unordered_map<std::type_index, Register::Id>& get_type_to_id() {
+        static std::unordered_map<std::type_index, Id> type_to_id;
+        return type_to_id;
+    }
+
+    inline static std::unordered_map<Register::Id, Register::FactoryFunc>& get_id_to_obj() {
+        static std::unordered_map<Id, FactoryFunc> id_to_obj;
+        return id_to_obj;
+    }
 };

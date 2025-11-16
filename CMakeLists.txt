@@ -14,8 +14,6 @@ set(SOURCES
     hittable/hittable.cpp
     hittable/objects/sphere/sphere.cpp
 
-    serialization/register.cpp
-
     utils/utils.cpp
     utils/vec3.cpp
     utils/socket.cpp
