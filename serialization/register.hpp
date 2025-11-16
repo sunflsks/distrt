@@ -5,6 +5,11 @@
 
 #include "hittable.hpp"
 
+template <typename T>
+concept RegistrableHittable = std::derived_from<T, Hittable> && requires() {
+    { T::deserialize(std::span<std::byte>()) } -> std::same_as<std::unique_ptr<T>>;
+};
+
 class Register {
    public:
     using Id = std::byte;
@@ -20,7 +25,7 @@ class Register {
         return get_type_to_id()[typeid(hittable)];
     }
 
-    template <typename T>
+    template <RegistrableHittable T>
     static bool register_hittable() {
         static_assert(std::is_convertible_v<T*, Hittable*>);
 
