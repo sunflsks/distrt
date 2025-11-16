@@ -8,30 +8,28 @@
 class Register {
    public:
     using Id = std::byte;
+    using FactoryFunc = std::function<std::unique_ptr<Hittable>(std::span<std::byte>)>;
 
-    static std::unique_ptr<Hittable> make_hittable(Id id, std::span<std::byte> data) {
-        return id_to_obj[id](data);
-    }
+    static std::unique_ptr<Hittable> make_hittable(Id id, std::span<std::byte> data);
+    static Id hittable_id(const Hittable& hittable);
 
-    static Id hittable_id(const Hittable& hittable) { return type_to_id[typeid(hittable)]; }
+    // we make these functions so that we know when the static vars get initialized
+    static std::unordered_map<std::type_index, Id>& get_type_to_id();
+    static std::unordered_map<Id, FactoryFunc>& get_id_to_obj();
 
     template <typename T>
     static bool register_hittable() {
         static_assert(std::is_convertible_v<T*, Hittable*>);
 
         Id id = static_cast<Id>(++id_ctr);
+        std::cout << static_cast<int>(id) << std::endl;
 
-        type_to_id[typeid(T)] = id;
-        id_to_obj[id] = &T::deserialize;
+        get_type_to_id()[typeid(T)] = id;
+        get_id_to_obj()[id] = &T::deserialize;
 
         return true;
     }
 
    private:
-    using FactoryFunc = std::function<std::unique_ptr<Hittable>(std::span<std::byte>)>;
-
     static int id_ctr;
-
-    static std::unordered_map<std::type_index, Id> type_to_id;
-    static std::unordered_map<Id, FactoryFunc> id_to_obj;
 };
