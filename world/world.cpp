@@ -2,7 +2,8 @@
 
 #include "hittable.hpp"
 #include "interval.hpp"
-#include "serializer.hpp"
+#include "register.hpp"
+#include "sphere.hpp"
 
 bool World::hit(const Ray& r, const Interval& t_interval, Hittable::hit_record& rec) const {
     bool ok = false;
@@ -20,6 +21,44 @@ bool World::hit(const Ray& r, const Interval& t_interval, Hittable::hit_record& 
     return ok;
 }
 
+// SERIALIZATION
+
 std::vector<std::byte> World::bytes() const {
-    return WorldSerializer(*this).bytes();
+    // format
+    // std::byte (uint8_t) type
+    // std::byte*x (uint32_t) size
+    // info.....
+    // rinse and repeat till we hit the end
+
+    std::vector<std::byte> serialized_objs;
+
+    for (auto& hittable : list) {
+        serialized_objs.push_back(Register::hittable_id(*hittable));
+
+        auto bytes = hittable->bytes();
+        serialized_objs.insert(serialized_objs.end(),
+                               std::make_move_iterator(bytes.begin()),
+                               std::make_move_iterator(bytes.end()));
+    }
+
+    return serialized_objs;
+}
+
+void World::deserialize(std::vector<std::byte> bytes) {
+    // assuming bytes is a vector that only holds the data we want - no more.
+
+    auto cur = bytes.data();
+    auto end = bytes.data() + bytes.size();
+
+    while (cur != end) {
+        auto id = *reinterpret_cast<Register::Id*>(cur);
+        cur += sizeof(std::byte);
+
+        uint64_t pack_size = *reinterpret_cast<uint64_t*>(cur + sizeof(std::byte));
+        cur += sizeof(uint64_t);
+
+        std::span<std::byte> data_span(cur, pack_size);
+
+        list.push_back(Register::make_hittable(id, data_span));
+    }
 }

@@ -12,9 +12,6 @@
 class Material;
 
 class Hittable {
-   protected:
-    static std::unordered_map<std::type_index, std::byte> type_to_id;
-
    public:
     std::shared_ptr<Material> mat;
 
@@ -33,9 +30,9 @@ class Hittable {
     Hittable();
     Hittable(std::shared_ptr<Material> mat);
 
-    static std::unique_ptr<Hittable> deserialize(std::span<std::byte> chunk);
-
     virtual bool hit(const Ray& r, const Interval& t_interval, hit_record& rec) const = 0;
+
     virtual std::vector<std::byte> bytes() const = 0;
+
     virtual ~Hittable();
 };

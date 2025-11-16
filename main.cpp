@@ -7,7 +7,6 @@
 #include "hittable.hpp"
 #include "materials.hpp"
 #include "ray.hpp"
-#include "serializer.hpp"
 #include "sphere.hpp"
 #include "world.hpp"
 
@@ -29,6 +28,8 @@ int main() {
 
     // send to server
     auto bytes = world.bytes();
+    World new_world;
+    new_world.deserialize(bytes);
 
-    cam.render(world);
+    cam.render(new_world);
 }
