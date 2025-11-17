@@ -12,7 +12,7 @@ concept RegistrableHittable = std::derived_from<T, Hittable> && requires() {
 
 class Register {
    public:
-    using Id = std::byte;
+    using Id = std::uint8_t;
     using FactoryFunc = std::function<std::unique_ptr<Hittable>(std::span<std::byte>)>;
 
     // we use these two functions so that we know when the static vars get initialized

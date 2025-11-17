@@ -33,7 +33,8 @@ std::vector<std::byte> World::bytes() const {
     std::vector<std::byte> serialized_objs;
 
     for (auto& hittable : list) {
-        serialized_objs.push_back(Register::hittable_id(*hittable));
+        auto type_id = std::byte{Register::hittable_id(*hittable)};
+        serialized_objs.push_back(type_id);
 
         auto bytes = hittable->bytes();
         serialized_objs.insert(serialized_objs.end(),
@@ -51,8 +52,8 @@ void World::deserialize(std::vector<std::byte> bytes) {
     auto end = bytes.data() + bytes.size();
 
     while (cur < end) {
-        auto id = *reinterpret_cast<Register::Id*>(cur);
-        cur += sizeof(std::byte);
+        auto id = *reinterpret_cast<std::uint8_t*>(cur);
+        cur += sizeof(std::uint8_t);
 
         uint64_t pack_size = *reinterpret_cast<uint64_t*>(cur);
         cur += sizeof(uint64_t);
