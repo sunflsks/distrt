@@ -55,8 +55,8 @@ void World::deserialize(std::vector<std::byte> bytes) {
         auto id = *reinterpret_cast<std::uint8_t*>(cur);
         cur += sizeof(std::uint8_t);
 
-        uint64_t pack_size = *reinterpret_cast<uint64_t*>(cur);
-        cur += sizeof(uint64_t);
+        std::uint64_t pack_size = *reinterpret_cast<std::uint64_t*>(cur);
+        cur += sizeof(std::uint64_t);
 
         std::span<std::byte> data_span(cur, pack_size);
 
