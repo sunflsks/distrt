@@ -12,8 +12,9 @@ END GOAL
 SERIALIZER SETUP
     - Serializer(Object)
         - Get HittableList from Hittable, serialize each of the ones within. Pass them a vector for MaterialList as well so they can fill that out (which std shared ptrs they have).
-            - For each Hittable, call bytes()
-              - (what does bytes do) It returns a 1-byte prefix, indicating the type of thing it is (sphere, etc). it appends that + data. 
 
     - Material list
-        - After this is done, we should have
+        - After this is done, we should have a std:: set of materials - we add this to the total bytes as well
+
+TODO
+    - Move object serialization from World to materials/register.{cpp,hpp} (should probably be renamed to hittables.{cpp,hpp})
