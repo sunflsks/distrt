@@ -50,15 +50,17 @@ void World::deserialize(std::vector<std::byte> bytes) {
     auto cur = bytes.data();
     auto end = bytes.data() + bytes.size();
 
-    while (cur != end) {
+    while (cur < end) {
         auto id = *reinterpret_cast<Register::Id*>(cur);
         cur += sizeof(std::byte);
 
-        uint64_t pack_size = *reinterpret_cast<uint64_t*>(cur + sizeof(std::byte));
+        uint64_t pack_size = *reinterpret_cast<uint64_t*>(cur);
         cur += sizeof(uint64_t);
 
         std::span<std::byte> data_span(cur, pack_size);
 
         list.push_back(Register::make_hittable(id, data_span));
+
+        cur += pack_size;
     }
 }

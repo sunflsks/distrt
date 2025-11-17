@@ -49,15 +49,13 @@ std::vector<std::byte> Sphere::bytes() const {
         reinterpret_cast<const std::byte*>(&SPHERE_PACK_SIZE),
         reinterpret_cast<const std::byte*>(&SPHERE_PACK_SIZE) + sizeof(SPHERE_PACK_SIZE));
 
-    byte_rep.insert(
-        byte_rep.end(),
-        reinterpret_cast<const std::byte*>(center_array.data()),
-        reinterpret_cast<const std::byte*>(center_array.data()) + sizeof(center_array.data()));
+    byte_rep.insert(byte_rep.end(),
+                    reinterpret_cast<const std::byte*>(center_array.data()),
+                    reinterpret_cast<const std::byte*>(center_array.data()) + sizeof(center_array));
 
     byte_rep.insert(byte_rep.end(),
                     reinterpret_cast<const std::byte*>(&radius),
-                    reinterpret_cast<const std::byte*>(&radius) + sizeof(radius));
-
+                    reinterpret_cast<const std::byte*>(&radius) + sizeof(double));
     // TODO: something w/ mats
 
     return byte_rep;
