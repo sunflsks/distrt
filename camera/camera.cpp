@@ -1,6 +1,6 @@
 #include "camera.hpp"
 
-#include "material.hpp"
+#include "material/material.hpp"
 
 Color Camera::ray_color(const Ray& r, const Hittable& tgt, int max) {
     Hittable::hit_record rec;

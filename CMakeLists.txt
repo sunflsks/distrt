@@ -25,5 +25,5 @@ set(SOURCES
 add_executable(${PROJECT_NAME} ${SOURCES})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE OpenMP::OpenMP_CXX)
-target_include_directories(${PROJECT_NAME} PUBLIC camera hittable hittable/objects/sphere material utils world serialization .)
+target_include_directories(${PROJECT_NAME} PUBLIC .)
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -Werror -ggdb3)

@@ -3,7 +3,7 @@
 #include <functional>
 #include <typeinfo>
 
-#include "hittable.hpp"
+#include "hittable/hittable.hpp"
 
 template <typename T>
 concept RegistrableHittable = std::derived_from<T, Hittable> && requires() {

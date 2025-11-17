@@ -1,7 +1,7 @@
 #pragma once
 
-#include "hittable.hpp"
-#include "ray.hpp"
+#include "hittable/hittable.hpp"
+#include "utils/ray.hpp"
 
 struct ScatterRecord {
     Ray scattered;

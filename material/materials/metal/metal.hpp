@@ -1,6 +1,6 @@
 #pragma once
 
-#include "materials.hpp"
+#include "material/materials.hpp"
 
 class Metal : public Material {
    private:

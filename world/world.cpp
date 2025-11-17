@@ -1,9 +1,9 @@
 #include "world.hpp"
 
-#include "hittable.hpp"
-#include "interval.hpp"
-#include "register.hpp"
-#include "sphere.hpp"
+#include "hittable/hittable.hpp"
+#include "hittable/objects/sphere/sphere.hpp"
+#include "serialization/register.hpp"
+#include "utils/interval.hpp"
 
 bool World::hit(const Ray& r, const Interval& t_interval, Hittable::hit_record& rec) const {
     bool ok = false;

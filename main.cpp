@@ -3,12 +3,12 @@
 #include <iostream>
 #include <memory>
 
-#include "camera.hpp"
-#include "hittable.hpp"
-#include "materials.hpp"
-#include "ray.hpp"
-#include "sphere.hpp"
-#include "world.hpp"
+#include "camera/camera.hpp"
+#include "hittable/hittable.hpp"
+#include "hittable/objects/sphere/sphere.hpp"
+#include "material/materials.hpp"
+#include "utils/ray.hpp"
+#include "world/world.hpp"
 
 int main() {
     auto material_ground = std::make_shared<DiffuseLambertian>(Color(0.2, 0.8, 0.0));

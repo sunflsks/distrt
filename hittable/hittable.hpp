@@ -6,8 +6,8 @@
 #include <unordered_map>
 #include <vector>
 
-#include "ray.hpp"
 #include "utils/interval.hpp"
+#include "utils/ray.hpp"
 
 class Material;
 

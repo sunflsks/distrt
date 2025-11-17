@@ -1,4 +1,4 @@
-#include "material.hpp"
+#include "material/material.hpp"
 
 class DiffuseLambertian : public Material {
    private:

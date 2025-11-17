@@ -1,8 +1,8 @@
 #include <fstream>
 #include <string>
 
-#include "hittable.hpp"
-#include "utils.hpp"
+#include "hittable/hittable.hpp"
+#include "utils/utils.hpp"
 
 class Camera {
    public:

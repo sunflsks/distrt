@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "hittable.hpp"
+#include "hittable/hittable.hpp"
 
 class World : public Hittable {
    private:

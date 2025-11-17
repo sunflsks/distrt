@@ -1,7 +1,7 @@
 #include "sphere.hpp"
 
-#include "register.hpp"
-#include "utils.hpp"
+#include "serialization/register.hpp"
+#include "utils/utils.hpp"
 
 constexpr uint64_t SPHERE_PACK_SIZE = static_cast<uint64_t>(sizeof(Point3) + sizeof(double));
 
