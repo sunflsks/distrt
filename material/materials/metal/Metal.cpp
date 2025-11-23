@@ -1,5 +1,7 @@
 #include "Metal.hpp"
 
+#include <stdexcept>
+
 #include "serialization/utils.hpp"
 
 std::optional<ScatterRecord> Metal::scatter(const Ray& r, const Hittable::hit_record& rec) {
@@ -17,7 +19,22 @@ std::optional<ScatterRecord> Metal::scatter(const Ray& r, const Hittable::hit_re
 
 std::vector<std::byte> Metal::bytes() const {
     std::vector<std::byte> bytes;
-    add_size_to_bytes(bytes, static_cast<uint64_t>(sizeof(albedo)));
+    add_size_to_bytes(bytes, sizeof(albedo) + sizeof(fuzz_factor));
     append_to_bytes(bytes, albedo);
+    append_to_bytes(bytes, fuzz_factor);
     return bytes;
+}
+
+// static
+std::shared_ptr<Material> Metal::deserialize(std::span<std::byte> bytes) {
+    if (bytes.size_bytes() != sizeof(albedo) + sizeof(fuzz_factor)) {
+        throw std::runtime_error("Invalid span passed to Metal::deserialize");
+    }
+
+    double fuzz_factor;
+    Vec3 albedo;
+
+    deserialize_from_bytes(bytes, albedo, fuzz_factor);
+
+    return std::make_shared<Metal>(albedo, fuzz_factor);
 }

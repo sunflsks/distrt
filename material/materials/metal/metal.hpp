@@ -12,4 +12,6 @@ class Metal : public Material {
     ~Metal() override = default;
     std::optional<ScatterRecord> scatter(const Ray& r, const Hittable::hit_record& rec) override;
     std::vector<std::byte> bytes() const override;
+
+    static std::shared_ptr<Material> deserialize(std::span<std::byte> bytes);
 };

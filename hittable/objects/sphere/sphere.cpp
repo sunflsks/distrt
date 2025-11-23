@@ -3,10 +3,6 @@
 #include "serialization/register.hpp"
 #include "serialization/utils.hpp"
 
-constexpr uint64_t SPHERE_PACK_SIZE = sizeof(Point3) + sizeof(double);
-
-static bool _ = Register::register_hittable<Sphere>();
-
 bool Sphere::hit(const Ray& r, const Interval& t_interval, hit_record& rec) const {
     auto oc = center - r.origin();
     double a = r.direction().dot(r.direction());      // a = (d . d)
@@ -42,7 +38,7 @@ std::vector<std::byte> Sphere::bytes() const {
     std::vector<std::byte> byte_rep;
 
     // no need to worry about endianness, this code is never touching a big-endian machine.
-    add_size_to_bytes(byte_rep, SPHERE_PACK_SIZE);
+    add_size_to_bytes(byte_rep, sizeof(center) + sizeof(radius));
     append_to_bytes(byte_rep, center.data());
     append_to_bytes(byte_rep, radius);
     // TODO: something w/ mats
@@ -52,7 +48,7 @@ std::vector<std::byte> Sphere::bytes() const {
 
 // static
 std::unique_ptr<Sphere> Sphere::deserialize(std::span<std::byte> chunk) {
-    if (chunk.size() != SPHERE_PACK_SIZE) {
+    if (chunk.size_bytes() != sizeof(center) + sizeof(radius)) {
         throw std::invalid_argument("Invalid object passed in to deserialize Sphere");
     }
 

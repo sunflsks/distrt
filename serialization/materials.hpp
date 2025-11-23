@@ -1,27 +1,24 @@
+#include <functional>
 #include <unordered_map>
 
-#include "material/materials.hpp"
+#include "material/material.hpp"
+#include "utils.hpp"
 
 class MaterialSerializer {
    public:
-    inline std::uint64_t register_material(std::shared_ptr<Material>& material) {
-        auto material_ptr = material.get();
+    using MaterialTypeId = std::uint8_t;
+    using MaterialId = std::uint64_t;
+    using DeserializeFunction = std::function<std::shared_ptr<Material>(std::span<std::byte>)>;
 
-        if (registered_materials.contains(material_ptr)) {
-            return registered_materials[material_ptr];
-        }
-
-        registered_materials[material_ptr] = ++current_id;
-        return current_id;
-    }
-
-    std::vector<std::byte> bytes() {
-        
-    }
-
-    std::shared_ptr<Material> material_for_id(std::uint64_t id) { return registered_materials[id]; }
+    MaterialId id_for_material(std::shared_ptr<Material>& material);
+    std::shared_ptr<Material> material_for_id(MaterialId id);
 
    private:
-    std::uint64_t current_id = 0;
-    std::unordered_map<Material*, std::uint64_t> registered_materials;
+    MaterialTypeId id_for_material_type(Material& material);
+
+    // returns a function pointer to the deserialize() method for a given ID
+    DeserializeFunction deserializer_for_type_id(MaterialTypeId id);
+
+    // used for serialization
+    std::unordered_map<std::shared_ptr<Material>, std::uint64_t> registered_materials;
 };

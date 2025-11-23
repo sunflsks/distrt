@@ -1,13 +1,22 @@
 #include "register.hpp"
 
+#include "hittable/objects/sphere/sphere.hpp"
+
 // static
-std::unordered_map<std::type_index, Register::Id>& Register::get_type_to_id() {
-    static std::unordered_map<std::type_index, Id> type_to_id;
-    return type_to_id;
+std::unique_ptr<Hittable> Register::make_hittable(Register::Id id, std::span<std::byte> data) {
+    switch (id) {
+        case 1:
+            return Sphere::deserialize(data);
+    }
+
+    throw std::runtime_error("Given incompatible id to deserialize");
 }
 
 // static
-std::unordered_map<Register::Id, Register::FactoryFunc>& Register::get_id_to_obj() {
-    static std::unordered_map<Id, FactoryFunc> id_to_obj;
-    return id_to_obj;
+Register::Id Register::hittable_id(const Hittable& hittable) {
+    if (dynamic_cast<const Sphere*>(&hittable) != nullptr) {
+        return 1;
+    }
+
+    throw std::runtime_error("Given incompatible hittable to serialize");
 }

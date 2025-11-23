@@ -18,6 +18,7 @@ set(SOURCES
     material/materials/Metal/Metal.cpp
 
     serialization/register.cpp
+    serialization/materials.cpp
 
     utils/utils.cpp
     utils/vec3.cpp
