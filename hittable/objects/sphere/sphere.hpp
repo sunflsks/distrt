@@ -4,6 +4,9 @@
 
 class Sphere : public Hittable {
    public:
+    // this ctor is for deserialization
+    Sphere() : Hittable() {}
+
     Sphere(Point3 cen, double r) : Hittable(), center(cen), radius(r) {}
 
     Sphere(Point3 cen, double r, std::shared_ptr<Material> mat)

@@ -1,9 +1,9 @@
 #include "sphere.hpp"
 
 #include "serialization/register.hpp"
-#include "utils/utils.hpp"
+#include "serialization/utils.hpp"
 
-constexpr auto SPHERE_PACK_SIZE = static_cast<std::uint64_t>(sizeof(Point3) + sizeof(double));
+constexpr uint64_t SPHERE_PACK_SIZE = sizeof(Point3) + sizeof(double);
 
 static bool _ = Register::register_hittable<Sphere>();
 
@@ -42,20 +42,9 @@ std::vector<std::byte> Sphere::bytes() const {
     std::vector<std::byte> byte_rep;
 
     // no need to worry about endianness, this code is never touching a big-endian machine.
-    auto center_array = center.data();
-
-    byte_rep.insert(
-        byte_rep.end(),
-        reinterpret_cast<const std::byte*>(&SPHERE_PACK_SIZE),
-        reinterpret_cast<const std::byte*>(&SPHERE_PACK_SIZE) + sizeof(SPHERE_PACK_SIZE));
-
-    byte_rep.insert(byte_rep.end(),
-                    reinterpret_cast<const std::byte*>(center_array.data()),
-                    reinterpret_cast<const std::byte*>(center_array.data()) + sizeof(center_array));
-
-    byte_rep.insert(byte_rep.end(),
-                    reinterpret_cast<const std::byte*>(&radius),
-                    reinterpret_cast<const std::byte*>(&radius) + sizeof(double));
+    add_size_to_bytes(byte_rep, SPHERE_PACK_SIZE);
+    append_to_bytes(byte_rep, center.data());
+    append_to_bytes(byte_rep, radius);
     // TODO: something w/ mats
 
     return byte_rep;
@@ -67,9 +56,9 @@ std::unique_ptr<Sphere> Sphere::deserialize(std::span<std::byte> chunk) {
         throw std::invalid_argument("Invalid object passed in to deserialize Sphere");
     }
 
-    Point3* point = reinterpret_cast<Point3*>(chunk.data());
-    double* radius = reinterpret_cast<double*>(chunk.data() + sizeof(Point3));
+    auto sphere = std::make_unique<Sphere>();
+    deserialize_from_bytes(chunk, sphere->center, sphere->radius);
 
-    return std::make_unique<Sphere>(*point, *radius);
+    return sphere;
     // skipped past type + size, this is the actual data.
 }
