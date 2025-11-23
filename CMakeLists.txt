@@ -14,6 +14,9 @@ set(SOURCES
     hittable/hittable.cpp
     hittable/objects/sphere/sphere.cpp
 
+    material/materials/DiffuseLambertian/DiffuseLambertian.cpp
+    material/materials/Metal/Metal.cpp
+
     serialization/register.cpp
 
     utils/utils.cpp
