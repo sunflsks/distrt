@@ -9,8 +9,6 @@ class DiffuseLambertian : public Material {
     ~DiffuseLambertian() override = default;
 
     std::optional<ScatterRecord> scatter([[maybe_unused]] const Ray& r,
-                                         const Hittable::hit_record& rec) override {
-        auto rand_vec = Ray::rand_unit_vec() + rec.normal;
-        return ScatterRecord{Ray(rec.p, rand_vec), albedo};
-    }
+                                         const Hittable::hit_record& rec) override;
+    std::vector<std::byte> bytes() const override;
 };
