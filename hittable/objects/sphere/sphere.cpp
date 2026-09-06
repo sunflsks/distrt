@@ -34,27 +34,33 @@ bool Sphere::hit(const Ray& r, const Interval& t_interval, hit_record& rec) cons
     return true;
 }
 
-std::vector<std::byte> Sphere::bytes() const {
+std::vector<std::byte> Sphere::bytes(MaterialSerializer& materialSerializer) {
     std::vector<std::byte> byte_rep;
 
     // no need to worry about endianness, this code is never touching a big-endian machine.
-    add_size_to_bytes(byte_rep, sizeof(center) + sizeof(radius));
+    add_size_to_bytes(byte_rep, sizeof(center) + sizeof(radius) + sizeof(MaterialSerializer::MaterialId));
+
     append_to_bytes(byte_rep, center.data());
     append_to_bytes(byte_rep, radius);
-    // TODO: something w/ mats
+    append_to_bytes(byte_rep, materialSerializer.id_for_material_instance(mat));
 
     return byte_rep;
 }
 
 // static
-std::unique_ptr<Sphere> Sphere::deserialize(std::span<std::byte> chunk) {
-    if (chunk.size_bytes() != sizeof(center) + sizeof(radius)) {
+std::unique_ptr<Sphere> Sphere::deserialize(std::span<std::byte> chunk, MaterialSerializer& serializer) {
+    if (chunk.size_bytes() != sizeof(center) + sizeof(radius) + sizeof(MaterialSerializer::MaterialId)) {
+	std::cout << chunk.size_bytes() << std::endl;
+	std::cout << sizeof(center) + sizeof(radius) << std::endl;
         throw std::invalid_argument("Invalid object passed in to deserialize Sphere");
     }
 
     auto sphere = std::make_unique<Sphere>();
     deserialize_from_bytes(chunk, sphere->center, sphere->radius);
 
+    auto material_id = *reinterpret_cast<MaterialSerializer::MaterialId*>(chunk.data() + sizeof(center) + sizeof(radius));
+
+    sphere->mat = serializer.material_for_id_instance(material_id);
     return sphere;
     // skipped past type + size, this is the actual data.
 }

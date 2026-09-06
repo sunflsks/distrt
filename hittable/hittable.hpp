@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "serialization/materials.hpp"
 #include "utils/interval.hpp"
 #include "utils/ray.hpp"
 
@@ -32,7 +33,7 @@ class Hittable {
 
     virtual bool hit(const Ray& r, const Interval& t_interval, hit_record& rec) const = 0;
 
-    virtual std::vector<std::byte> bytes() const = 0;
+    virtual std::vector<std::byte> bytes(MaterialSerializer& materialSerializer) = 0;
 
     virtual ~Hittable();
 };

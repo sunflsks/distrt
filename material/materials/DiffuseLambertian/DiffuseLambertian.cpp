@@ -11,7 +11,6 @@ std::optional<ScatterRecord> DiffuseLambertian::scatter([[maybe_unused]] const R
 std::vector<std::byte> DiffuseLambertian::bytes() const {
     std::vector<std::byte> byte_rep;
 
-    add_size_to_bytes(byte_rep, sizeof(Color));
     append_to_bytes(byte_rep, albedo);
 
     return byte_rep;
@@ -20,6 +19,7 @@ std::vector<std::byte> DiffuseLambertian::bytes() const {
 // static
 std::shared_ptr<Material> DiffuseLambertian::deserialize(std::span<std::byte> bytes) {
     if (bytes.size_bytes() != sizeof(Color)) {
+	std::cout << bytes.size_bytes() << std::endl;
         throw std::runtime_error("Invalid span passed to DiffuseLambertian::deserialize");
     }
 

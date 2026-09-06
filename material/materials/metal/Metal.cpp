@@ -19,7 +19,6 @@ std::optional<ScatterRecord> Metal::scatter(const Ray& r, const Hittable::hit_re
 
 std::vector<std::byte> Metal::bytes() const {
     std::vector<std::byte> bytes;
-    add_size_to_bytes(bytes, sizeof(albedo) + sizeof(fuzz_factor));
     append_to_bytes(bytes, albedo);
     append_to_bytes(bytes, fuzz_factor);
     return bytes;

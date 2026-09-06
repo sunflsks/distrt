@@ -2,6 +2,7 @@
 
 #include "hittable/hittable.hpp"
 #include "hittable/objects/sphere/sphere.hpp"
+#include "serialization/materials.hpp"
 #include "serialization/register.hpp"
 #include "utils/interval.hpp"
 
@@ -23,7 +24,7 @@ bool World::hit(const Ray& r, const Interval& t_interval, Hittable::hit_record& 
 
 // SERIALIZATION
 
-std::vector<std::byte> World::bytes() const {
+std::vector<std::byte> World::bytes(MaterialSerializer& serializer) {
     // format
     // std::byte (uint8_t) type
     // std::byte*x (uint32_t) size
@@ -36,11 +37,20 @@ std::vector<std::byte> World::bytes() const {
         auto type_id = std::byte{Register::hittable_id(*hittable)};
         serialized_objs.push_back(type_id);
 
-        auto bytes = hittable->bytes();
+        auto bytes = hittable->bytes(serializer);
+
         serialized_objs.insert(serialized_objs.end(),
                                std::make_move_iterator(bytes.begin()),
                                std::make_move_iterator(bytes.end()));
     }
+
+    std::vector<std::byte> serialized_mats = serializer.bytes();
+    serialized_objs.insert(serialized_objs.begin(), serialized_mats.begin(), serialized_mats.end());
+
+    // stick the size in front
+    std::uint64_t serialized_mats_size = serialized_mats.size();
+    auto size_bytes = reinterpret_cast<std::byte*>(&serialized_mats_size);
+    serialized_objs.insert(serialized_objs.begin(), size_bytes, size_bytes + sizeof(std::uint64_t));
 
     return serialized_objs;
 }
@@ -48,19 +58,29 @@ std::vector<std::byte> World::bytes() const {
 void World::deserialize(std::vector<std::byte> bytes) {
     // assuming bytes is a vector that only holds the data we want - no more.
 
+    // first, we deserialize the mats
     auto cur = bytes.data();
     auto end = bytes.data() + bytes.size();
 
+    std::uint64_t mat_size = *reinterpret_cast<std::uint64_t*>(cur);
+    cur += sizeof(std::uint64_t);
+
+    std::span<std::byte> mat_span(cur, mat_size);
+    cur += mat_size;
+
+    MaterialSerializer material_serializer(mat_span);
+
     while (cur < end) {
         auto id = *reinterpret_cast<std::uint8_t*>(cur);
-        cur += sizeof(std::uint8_t);
+        cur += sizeof(id);
 
         std::uint64_t pack_size = *reinterpret_cast<std::uint64_t*>(cur);
-        cur += sizeof(std::uint64_t);
+        cur += sizeof(pack_size);
+	std::cout << pack_size << std::endl;
 
         std::span<std::byte> data_span(cur, pack_size);
 
-        list.push_back(Register::make_hittable(id, data_span));
+        list.push_back(Register::make_hittable(id, data_span, material_serializer));
 
         cur += pack_size;
     }
