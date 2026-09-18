@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cstring>
 #include <memory>
 #include <span>
 #include <type_traits>
