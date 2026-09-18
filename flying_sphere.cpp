@@ -3,21 +3,22 @@
 #include <iostream>
 #include <memory>
 
-#include "camera.hpp"
-#include "hittable.hpp"
-#include "materials.hpp"
-#include "ray.hpp"
-#include "sphere.hpp"
+#include "camera/camera.hpp"
+#include "hittable/hittable.hpp"
+#include "material/materials.hpp"
+#include "utils/ray.hpp"
+#include "hittable/objects/sphere/sphere.hpp"
+#include "world/world.hpp"
 
 int main() {
     auto material_ground = std::make_shared<DiffuseLambertian>(Color(0.2, 0.8, 0.0));
     auto material_center = std::make_shared<DiffuseLambertian>(Color(0.1, 0.2, 0.5));
-    auto material_left = std::make_shared<metal>(Color(0.8, 0.8, 0.8));
-    auto material_right = std::make_shared<metal>(Color(0.8, 0.6, 0.2));
+    auto material_left = std::make_shared<Metal>(Color(0.8, 0.8, 0.8));
+    auto material_right = std::make_shared<Metal>(Color(0.8, 0.6, 0.2));
 
     for (int i = 0; i < 75; i++) {
         Camera cam;
-        Hittables world;
+        World world;
 
         cam.output = std::format("scene_{}.ppm", i);
 
