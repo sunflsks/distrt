@@ -9,7 +9,7 @@ class Camera {
     int width = 200;
     double aspect_ratio = 16.0 / 9.0;
     double viewport_width = 2.0;
-    int antialiasing_sample_count = 15;
+    int antialiasing_sample_count = 8;
     int vfov = 90;
     std::string output = "output.ppm";
 
@@ -51,8 +51,7 @@ class Camera {
 
     Color ray_color(const Ray& r, const Hittable& tgt, int max);
 
-    void write_color(std::ostream& out, Color pixel_color);
-
+    void write_colors(std::ostream& out, const std::vector<Color>& colors);
     Ray approximate_ray(int i, int j);
 
     Vec3 sample_square() const {

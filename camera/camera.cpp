@@ -1,5 +1,9 @@
 #include "camera.hpp"
 
+#include <charconv>
+#include <execution>
+#include <ranges>
+
 #include "material/material.hpp"
 
 Color Camera::ray_color(const Ray& r, const Hittable& tgt, int max) {
@@ -59,16 +63,21 @@ void Camera::refresh() {
 
 void Camera::render(const Hittable& world) {
     refresh();
+    std::clog << "Rendering frame..." << std::endl;
 
-    std::remove(output.c_str());
-    std::ofstream out(output);
+    [[maybe_unused]]
+    static auto clear_old_value = [&]() { return std::remove(output.c_str()); }();
+
+    std::ofstream out(output, std::ios::app);
 
     out << "P3\n" << width << " " << height << "\n255\n";
 
-    for (int row = 0; row < height; row++) {
-        std::clog << "\rOn line " << row << "/" << height << std::endl;
+    std::vector<int> col_cnt(width);
+    std::ranges::iota(col_cnt, 0);
 
-        for (int col = 0; col < width; col++) {
+    std::vector<Color> colors(height * width);
+    for (int row = 0; row < height; row++) {
+        std::for_each(std::execution::par_unseq, col_cnt.begin(), col_cnt.end(), [&](int col) {
             // find the pixel center in terms of world space
             Color total_colors(0, 0, 0);
 
@@ -79,21 +88,54 @@ void Camera::render(const Hittable& world) {
 
             total_colors *= (1.0 / antialiasing_sample_count);
 
-            write_color(out, total_colors.gamma_transform());
-        }
+            colors[(row * width) + col] = total_colors.gamma_transform();
+        });
     }
+
+    write_colors(out, colors);
 }
 
-void Camera::write_color(std::ostream& out, Color pixel_color) {
-    static const Interval zero_one(0.0, 0.9999999);
+void Camera::write_colors(std::ostream& out, const std::vector<Color>& colors) {
+    static const Interval ZERO_ONE(0.0, 0.9999999);
+    constexpr int MAX_PIXEL_DIGITS = 3;
 
-    double r = pixel_color.x();
-    double g = pixel_color.y();
-    double b = pixel_color.z();
+    std::vector<char> ppm_buf(colors.size() * (MAX_PIXEL_DIGITS + 1) * 3,
+                              ' ');  // 3 nums, each with max 3 digits + 1 whitespace
 
-    out << static_cast<int>(255.999 * zero_one.clamp(r)) << ' '
-        << static_cast<int>(255.999 * zero_one.clamp(g)) << ' '
-        << static_cast<int>(255.999 * zero_one.clamp(b)) << '\n';
+    auto ppm_data_ptr = ppm_buf.data();
+    size_t sz = 0;
+    for (const auto& color : colors) {
+        double r = color.x();
+        double g = color.y();
+        double b = color.z();
+
+        for (auto color : {r, g, b}) {
+            auto [new_ppm_data_ptr, err] =
+                std::to_chars(ppm_data_ptr,
+                              ppm_data_ptr + MAX_PIXEL_DIGITS,
+                              static_cast<int>(255.999 * ZERO_ONE.clamp(color)));
+
+            if (err != std::errc{}) {
+                auto ec = std::make_error_code(err);
+                std::string errormsg = "Unable to write to file: " + ec.message();
+                throw std::runtime_error(errormsg);
+            }
+
+            sz += (new_ppm_data_ptr - ppm_data_ptr);
+
+            ppm_data_ptr = new_ppm_data_ptr;
+            *ppm_data_ptr = ' ';
+            sz++;
+            ppm_data_ptr++;
+        }
+
+        // points to where we would write a new number, so we need to edit the previous whitespace
+        // and turn it into a newline.
+
+        *(ppm_data_ptr - 1) = '\n';
+    }
+
+    out.write(ppm_buf.data(), sz);
 }
 
 Ray Camera::approximate_ray(int i, int j) {

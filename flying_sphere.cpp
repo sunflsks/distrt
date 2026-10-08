@@ -5,9 +5,9 @@
 
 #include "camera/camera.hpp"
 #include "hittable/hittable.hpp"
+#include "hittable/objects/sphere/sphere.hpp"
 #include "material/materials.hpp"
 #include "utils/ray.hpp"
-#include "hittable/objects/sphere/sphere.hpp"
 #include "world/world.hpp"
 
 int main() {
@@ -16,11 +16,11 @@ int main() {
     auto material_left = std::make_shared<Metal>(Color(0.8, 0.8, 0.8));
     auto material_right = std::make_shared<Metal>(Color(0.8, 0.6, 0.2));
 
+    Camera cam;
+    cam.center = Point3(2, 2, 1);
+    cam.output = "scene.ppm";
     for (int i = 0; i < 75; i++) {
-        Camera cam;
         World world;
-
-        cam.output = std::format("scene_{}.ppm", i);
 
         double modifier = i / ((double)75 / 2);
 
@@ -31,7 +31,6 @@ int main() {
         world.add(std::make_unique<Sphere>(Point3(1.0, 0.0, -1.0), 0.5, material_right));
 
         cam.vfov = 20 + i;
-        cam.center = Point3(2, 2, 1);
         cam.render(world);
     }
 }
