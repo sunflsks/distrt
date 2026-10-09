@@ -1,14 +1,8 @@
-#include <format>
-#include <fstream>
-#include <iostream>
 #include <memory>
 
 #include "camera/camera.hpp"
-#include "hittable/hittable.hpp"
 #include "hittable/objects/sphere/sphere.hpp"
 #include "material/materials.hpp"
-#include "serialization/materials.hpp"
-#include "utils/ray.hpp"
 #include "world/world.hpp"
 
 int main() {
@@ -28,10 +22,5 @@ int main() {
     world.add(std::make_unique<Sphere>(Point3(1.0, 0.0, -1.0), 0.5, material_right));
 
     // send to server
-    MaterialSerializer matSerializer;
-    auto bytes = world.bytes(matSerializer);
-    World new_world;
-    new_world.deserialize(bytes);
-
-    cam.render(new_world);
+    cam.render(world);
 }

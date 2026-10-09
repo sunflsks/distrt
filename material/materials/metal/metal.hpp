@@ -11,7 +11,4 @@ class Metal : public Material {
     Metal(Vec3 albedo, double fuzz_factor = 0.25) : albedo(albedo), fuzz_factor(fuzz_factor) {};
     ~Metal() override = default;
     std::optional<ScatterRecord> scatter(const Ray& r, const Hittable::hit_record& rec) override;
-    std::vector<std::byte> bytes() const override;
-
-    static std::shared_ptr<Material> deserialize(std::span<std::byte> bytes);
 };

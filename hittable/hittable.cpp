@@ -1,7 +1,6 @@
 
 #include "hittable.hpp"
 
-#include "hittable/objects/sphere/sphere.hpp"
 #include "material/materials.hpp"
 
 Hittable::Hittable() : mat(std::make_shared<DiffuseLambertian>(Vec3(0, 0, 0))) {};

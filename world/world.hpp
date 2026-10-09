@@ -3,7 +3,6 @@
 #include <vector>
 
 #include "hittable/hittable.hpp"
-#include "serialization/materials.hpp"
 
 class World : public Hittable {
    private:
@@ -12,7 +11,4 @@ class World : public Hittable {
    public:
     void add(std::unique_ptr<Hittable> tgt) { list.push_back(std::move(tgt)); }
     bool hit(const Ray& r, const Interval& t_interval, Hittable::hit_record& rec) const override;
-
-    std::vector<std::byte> bytes(MaterialSerializer& materialSerializer) override;
-    void deserialize(std::vector<std::byte> bytes);
 };

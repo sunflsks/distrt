@@ -23,9 +23,6 @@ set(COMMON_SOURCES
     material/materials/DiffuseLambertian/DiffuseLambertian.cpp
     material/materials/Metal/Metal.cpp
 
-    serialization/register.cpp
-    serialization/materials.cpp
-
     utils/utils.cpp
     utils/socket.cpp
 
@@ -40,5 +37,5 @@ add_executable(flying_sphere flying_sphere.cpp ${COMMON_SOURCES})
 foreach(TARGET ${PROJECT_NAME} flying_sphere)
     target_link_libraries(${TARGET} PRIVATE TBB::tbb)
     target_include_directories(${TARGET} PUBLIC .)
-    target_compile_options(${TARGET} PRIVATE -Wall -Wextra -Wpedantic -Werror -freflection)
+    target_compile_options(${TARGET} PRIVATE -Wall -Wextra -Wpedantic -Werror -freflection -Ofast -flto -march=native)
 endforeach()
