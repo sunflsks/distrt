@@ -1,0 +1,4 @@
+CompileFlags:
+  Compiler: /opt/homebrew/bin/g++-16
+  Remove:
+  - -freflection
