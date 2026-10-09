@@ -19,7 +19,7 @@ int main() {
     Camera cam;
     cam.center = Point3(2, 2, 1);
     cam.output = "scene.ppm";
-    for (int i = 0; i < 75; i++) {
+    for (int i = 0; i < 1500; i++) {
         World world;
 
         double modifier = i / ((double)75 / 2);
