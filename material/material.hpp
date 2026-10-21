@@ -1,5 +1,7 @@
 #pragma once
 
+#include <optional>
+
 #include "hittable/hittable.hpp"
 #include "utils/ray.hpp"
 

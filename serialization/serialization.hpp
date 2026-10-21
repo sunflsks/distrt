@@ -1,10 +1,13 @@
-#include <memory>
+#pragma once
+
+#include <cstddef>
 #include <vector>
 
-#include "hittable/hittable.hpp"
-#include "material/material.hpp"
+#include "world/world.hpp"
 
-struct SerializedWorld {
-    std::vector<std::shared_ptr<Material>> materials;
-    std::vector<std::unique_ptr<Hittable>> objects;
-};
+namespace serialization {
+// Returns the binary scene payload, suitable for file or network transport.
+std::vector<std::byte> serialize(const World& world);
+// Input must contain a complete scene. Malformed or truncated data throws.
+World deserialize(const std::vector<std::byte>& input);
+}  // namespace serialization

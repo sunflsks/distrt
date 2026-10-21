@@ -2,6 +2,7 @@
 
 #include <charconv>
 #include <execution>
+#include <iostream>
 #include <ranges>
 
 #include "material/material.hpp"

@@ -1,7 +1,7 @@
 #pragma once
 
+#include <array>
 #include <cmath>
-#include <iostream>
 
 // make the following all inline for header only usage
 

@@ -26,6 +26,8 @@ set(COMMON_SOURCES
     utils/utils.cpp
     utils/socket.cpp
 
+    serialization/serialization.cpp
+
     world/world.cpp
 )
 
